@@ -1,3 +1,4 @@
+import Footer from "./components/Footer";
 import Header from "./components/Header";
 import BoxesMain from "./components/mainPage/BoxesMain";
 import BoxHome from "./components/mainPage/BoxHome";
@@ -25,6 +26,7 @@ export default function Home() {
           ))}
         </section>
       </main>
+      <Footer />
     </>
   );
 };
