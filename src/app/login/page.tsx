@@ -2,7 +2,7 @@ import { Button } from "@nextui-org/react";
 import { Input } from "@nextui-org/react";
 import { Divider } from "@nextui-org/react";
 import Image from "next/image";
-import sign_in from "@/../public/sign_in.png";
+import sign_in from "../../../public/sign_in.png";
 
 export default function Login() {
     return (
