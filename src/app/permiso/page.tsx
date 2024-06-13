@@ -1,34 +1,81 @@
 'use client'
-import { useRef } from "react";
-import { useReactToPrint } from "react-to-print";
+import { useState } from 'react';
 
 const Permiso = () => {
-    const componentRef = useRef(null);
-    const handlePrint = useReactToPrint({
-        content: () => componentRef.current,
-    });
+    // Estados para manejar los datos del formulario
+    const [motivo, setMotivo] = useState('');
+    const [fechaInicio, setFechaInicio] = useState('');
+    const [fechaFinal, setFechaFinal] = useState('');
+
+    // Función para manejar el envío del formulario
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        // Agregar la lógica para enviarlos a la API permiso
+        console.log('Motivo:', motivo);
+        console.log('Fecha de inicio:', fechaInicio);
+        console.log('Fecha final:', fechaFinal);
+
+        // Resetea los campos del formulario después de enviar
+        setMotivo('');
+        setFechaInicio('');
+        setFechaFinal('');
+    };
+
     return (
-        <>
-            <div className="flex items-center justify-center bg-gray-100" >
-                <div className="bg-white p-10 shadow-lg w-[220mm] h-[284.5mm] overflow-auto text-black" ref={componentRef}>
-                    <h2 className="text-left text-l font-bold mb-8">DOCENTES DEL CBTIS 144<br />TURNO MATUTINO</h2>
-                    <section className="mt-5">
-                        <p className="text-justify leading-relaxed text-base">
-                            En atención a la solicitud de autorización de permiso <strong>recibida el día 21 de septiembre de 2023</strong> en las oficinas de Control Escolar del turno matutino del Centro de Bachillerato Tecnológico Industrial y de Servicios No. 144, solicitamos de su apoyo para <strong>justificar las inasistencias</strong> de la (el) alumna(o) <strong>MORALES PEREZ CARLOS CESAR</strong> del <strong>QUINTO SEMESTRE grupo “A” de la especialidad en SOPORTE Y MANTENIMIENTO DE EQUIPO DE CÓMPUTO</strong> para el (los) día(s): <strong>21 y 22 de septiembre</strong>.
-                            <br /><br />
-                            El motivo por el cual se originó la inasistencia es <strong>DE SALUD</strong> y fue justificado debidamente por <strong>ROCIO GUADALUPE PEREZ MORALES, Madre del estudiante</strong> en mención.
-                            <br /><br />
-                            Se informó a la (el) solicitante que los permisos cubren las faltas, pero no permiten reponer exámenes, ni actividades realizadas dentro del aula en las fechas de la inasistencia, quedando a consideración de cada docente y a las reglas de trabajo en aula estipuladas por ustedes, el proceder. Así mismo, los permisos tramitados fuera de tiempo o de más de tres días son autorizados por la subdirección o dirección del plantel.
-                            Agradecemos su apoyo y quedamos atentos a sus comentarios.
-                        </p>
-                    </section>
-                </div>
+        <div className="min-h-screen bg-gray-100 flex items-center justify-center p-5">
+            <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+                <h1 className="text-2xl font-bold mb-6">Solicitar Permiso</h1>
+                <form onSubmit={handleSubmit}>
+                    <div className="mb-4">
+                        <label htmlFor="motivo" className="block text-sm font-medium text-gray-700 mb-2">Motivo del permiso</label>
+                        <textarea
+                            id="motivo"
+                            name="motivo"
+                            rows={4}
+                            className="block w-full p-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                            value={motivo}
+                            onChange={(e) => setMotivo(e.target.value)}
+                            placeholder="Describa el motivo del permiso"
+                            required
+                        ></textarea>
+                    </div>
+                    <div className="mb-4">
+                        <label htmlFor="fechas" className="block text-sm font-medium text-gray-700 mb-2">Fecha(s) de ausencia</label>
+                        <div id='fechas'>
+                            <label htmlFor="fecha_inicio" className="block text-xs font-medium text-gray-700 mb-2">Desde: </label>
+                            <input
+                                type="date"
+                                id="fecha_inicio"
+                                name="fecha_inicio"
+                                className="block w-full p-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                                value={fechaInicio}
+                                onChange={(e) => setFechaInicio(e.target.value)}
+                                placeholder="Seleccione la fecha de inicio"
+                                required
+                            />
+                            <label htmlFor="fecha_final" className="mt-2 block text-xs font-medium text-gray-700 mb-2">Hasta: </label>
+                            <input
+                                type="date"
+                                id="fecha_final"
+                                name="fecha_final"
+                                className="block w-full p-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                                value={fechaFinal}
+                                onChange={(e) => setFechaFinal(e.target.value)}
+                                placeholder="Seleccione la fecha final"
+                                required
+                            />
+                        </div>
+                    </div>
+                    <button
+                        type="submit"
+                        className="w-full bg-blue-500 text-white p-2.5 rounded-md hover:bg-blue-700 transition duration-200"
+                    >
+                        Enviar Solicitud
+                    </button>
+                </form>
             </div>
-            <button className="bg-red w-5 justify-items-center" onClick={handlePrint}>Print article</button>
-            
-        </>
-    )
+        </div>
+    );
 };
 
 export default Permiso;
-

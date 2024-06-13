@@ -7,7 +7,6 @@ import { useState, useRef} from "react";
 import Image from "next/image";
 import sign_in from "../../../public/sign_in.png";
 import axios from "axios";
-// import sign_in from "@/../public/sign_in.png";
 
 export default function Login() {
     const formRef = useRef(null) as any;
@@ -43,12 +42,18 @@ export default function Login() {
         <main className="flex min-h-screen items-center justify-center bg-slate-100">
             <section className="flex flex-col items-center justify-center w-full max-w-md space-y-4 bg-white rounded-lg shadow-lg dark:bg-gray-800 p-8">
                 <header className="text-3xl font-semibold text-gray-800 dark:text-white text-center">Control de ingreso</header>
+                {alumnoError && (
+                    <div className="z-50 absolute top-0 left-0 mt-4 ml-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded" role="alert">
+                        <strong className="font-bold">¡Algo salió mal! </strong>
+                        <span className="block sm:inline">No se encontró el número de control. Por favor, verifica tus credenciales e intenta nuevamente.</span>
+                    </div>
+                )}
                 <Divider/>
                 <form className="flex flex-col w-full space-y-4" ref={formRef}>
                     <div className="flex space-x-2">
                         <div className="flex items-center">
                             <div className="relative w-8 h-8">
-                                {/* <Image src={sign_in.src} alt="Logo" fill={true} quality={100}/> */}
+                                <Image src={sign_in.src} alt="Logo" fill={true} quality={100}/>
                             </div>
                         </div>
                         <Input 
