@@ -1,4 +1,5 @@
 export interface Sesion {
+    exp?:              number;
     numero_de_control: number;
     nombre:            string;
     apellido:          string;
@@ -8,4 +9,5 @@ export interface Sesion {
     semestre:          string;
     grupo:             string;
     especialidad:      string;
+    iat?:              number;
 }

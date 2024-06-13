@@ -12,7 +12,7 @@ export default function Login() {
     const formRef = useRef(null) as any;
     const [numeroControl, setNumeroControl] = useState('');
     const [alumnoError, setAlumnoError] = useState(false);
-
+    
     const handleInputChange = (event) => {
         setNumeroControl(event.target.value);
     };
