@@ -1,8 +1,39 @@
-import { Divider } from "@nextui-org/react";
-import { Button } from "@nextui-org/react";
+"use client";
+import { useState } from "react";
+import { Divider, Button } from "@nextui-org/react";
+import { IconButton, Drawer, Typography, Box, List, ListItem, ListItemButton, ListItemText } from "@mui/material";
+import MenuIcon from '@mui/icons-material/Menu';
 import Link from "next/link";
 
 export default function Header() {
+
+    const drawerWidth = 240;
+    const navItems = ['Inicio', 'Acerca de nosotros', 'Contacto'];
+
+    const [mobileOpen, setMobileOpen] = useState(false);
+
+    const handleDrawerToggle = () => {
+        setMobileOpen((prevState) => !prevState);
+    };
+
+    const drawer = (
+        <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center' }}>
+          <Typography variant="h6" sx={{ my: 2 }}>
+            Menú
+          </Typography>
+          <Divider />
+          <List>
+            {navItems.map((item) => (
+              <ListItem key={item} disablePadding>
+                <ListItemButton sx={{ textAlign: 'center' }}>
+                  <ListItemText primary={item} />
+                </ListItemButton>
+              </ListItem>
+            ))}
+          </List>
+        </Box>
+      );
+
     return(
         <header>
             <section className="bg-[#0C231E] h-12">
@@ -15,7 +46,7 @@ export default function Header() {
                 </article>
             </section>
             <nav className="relative h-16 bg-[#13322B] flex">
-                <ul className="w-full h-full flex items-center justify-center gap-10 lg:gap-20">
+                <ul className="hidden lg:w-full lg:h-full lg:flex lg:items-center lg:justify-center gap-10 lg:gap-20">
                     <li>
                         <Link href="#" className="text-white">Inicio</Link>
                     </li>
@@ -26,14 +57,41 @@ export default function Header() {
                         <Link href="#" className="text-white">Contacto</Link>
                     </li>
                 </ul>
-                <div className="absolute w-[1em] h-full right-36 py-2">
+
+                <div className="w-full h-full flex items-center justify-center">
+                    <IconButton
+                        className="text-white lg:hidden"
+                        aria-label="open drawer"
+                        edge="start"
+                        onClick={handleDrawerToggle}
+                    >
+                        <MenuIcon />
+                    </IconButton>
+                </div>
+
+                <div className="hidden lg:block lg:absolute lg:w-[1em] lg:h-full lg:right-36 lg:py-2">
                     <Divider orientation="vertical" className="bg-white mx-2" />
                 </div>
-                <div className="absolute w-[10%] h-full right-0 flex items-center justify-center">
+                
+                <div className="hidden lg:absolute lg:w-[8em] lg:h-full lg:flex lg:items-center lg:justify-center lg:right-0">
                     <Button className="bg-[#1d4b3f] text-white">
                         Cerrar sesión
                     </Button>
                 </div>
+
+                <Drawer
+                    variant="temporary"
+                    open={mobileOpen}
+                    onClose={handleDrawerToggle}
+                    ModalProps={{
+                        keepMounted: true, // Better open performance on mobile.
+                    }}
+                    sx={{
+                        '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+                    }}
+                    >
+                    {drawer}
+                </Drawer>
             </nav>
         </header>
     );
