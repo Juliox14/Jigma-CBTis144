@@ -1,5 +1,5 @@
 import Image from "next/image";
-import documento from "@/../public/documentos.png";
+import documento from "../../../../public/documentos.png";
 
 export default function BoxHome() {
     return (
