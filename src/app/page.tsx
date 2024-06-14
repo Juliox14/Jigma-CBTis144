@@ -1,7 +1,7 @@
 import Footer from "./components/Footer";
-import Header from "./components/Header";
 import BoxesMain from "./components/mainPage/BoxesMain";
 import BoxHome from "./components/mainPage/BoxHome";
+import Header from "./components/Header";
 import DescriptionMain from "./components/mainPage/DescriptionMain";
 
 export default function Home() {

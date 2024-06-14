@@ -58,7 +58,7 @@ export default function Header() {
                     </li>
                 </ul>
 
-                <div className="w-full h-full flex items-center justify-center">
+                <div className="w-full h-full flex items-center justify-center lg:hidden">
                     <IconButton
                         className="text-white lg:hidden"
                         aria-label="open drawer"
