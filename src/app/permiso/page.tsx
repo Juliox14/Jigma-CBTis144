@@ -1,34 +1,159 @@
 'use client'
-import { useRef } from "react";
-import { useReactToPrint } from "react-to-print";
+import { useState } from 'react';
+import axios from 'axios';
 
 const Permiso = () => {
-    const componentRef = useRef(null);
-    const handlePrint = useReactToPrint({
-        content: () => componentRef.current,
+    const [motivo, setMotivo] = useState('');
+    const [fechaInicio, setFechaInicio] = useState('');
+    const [fechaFinal, setFechaFinal] = useState('');
+    const [userData, setUserData] = useState({
+        numero_de_control: '',
+        nombre: '',
+        apellido: '',
+        nombre_tutor: '',
+        apellido_tutor: '',
+        turno: '',
+        semestre: '',
+        grupo: '',
+        especialidad: ''
     });
-    return (
-        <>
-            <div className="flex items-center justify-center bg-gray-100" >
-                <div className="bg-white p-10 shadow-lg w-[220mm] h-[284.5mm] overflow-auto text-black" ref={componentRef}>
-                    <h2 className="text-left text-l font-bold mb-8">DOCENTES DEL CBTIS 144<br />TURNO MATUTINO</h2>
-                    <section className="mt-5">
-                        <p className="text-justify leading-relaxed text-base">
-                            En atención a la solicitud de autorización de permiso <strong>recibida el día 21 de septiembre de 2023</strong> en las oficinas de Control Escolar del turno matutino del Centro de Bachillerato Tecnológico Industrial y de Servicios No. 144, solicitamos de su apoyo para <strong>justificar las inasistencias</strong> de la (el) alumna(o) <strong>MORALES PEREZ CARLOS CESAR</strong> del <strong>QUINTO SEMESTRE grupo “A” de la especialidad en SOPORTE Y MANTENIMIENTO DE EQUIPO DE CÓMPUTO</strong> para el (los) día(s): <strong>21 y 22 de septiembre</strong>.
-                            <br /><br />
-                            El motivo por el cual se originó la inasistencia es <strong>DE SALUD</strong> y fue justificado debidamente por <strong>ROCIO GUADALUPE PEREZ MORALES, Madre del estudiante</strong> en mención.
-                            <br /><br />
-                            Se informó a la (el) solicitante que los permisos cubren las faltas, pero no permiten reponer exámenes, ni actividades realizadas dentro del aula en las fechas de la inasistencia, quedando a consideración de cada docente y a las reglas de trabajo en aula estipuladas por ustedes, el proceder. Así mismo, los permisos tramitados fuera de tiempo o de más de tres días son autorizados por la subdirección o dirección del plantel.
-                            Agradecemos su apoyo y quedamos atentos a sus comentarios.
-                        </p>
-                    </section>
-                </div>
-            </div>
-            <button className="bg-red w-5 justify-items-center" onClick={handlePrint}>Print article</button>
+
+    const getDataAlumno = async () => {
+        try {
+            const res = await axios.get('/api/data', { withCredentials: true });
+            setUserData(res.data);
+        } catch (error) {
+            console.log('Petición no completada: ', error);
+        }
+    };
+
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        return new Intl.DateTimeFormat('es-ES', { day: 'numeric', month: 'long' }).format(date);
+    };
+    
+    const formatFechaAusencia = (fechaInicio, fechaFinal) => {
+        const fechaInicioDate = new Date(fechaInicio);
+        const fechaFinalDate = new Date(fechaFinal);
+    
+        if (fechaInicio === fechaFinal) {
+            return formatDate(fechaInicio);
+        }
+    
+        // Obtener los días y meses
+        const diaInicio = fechaInicioDate.getDate();
+        const diaFinal = fechaFinalDate.getDate();
+        const mesInicio = new Intl.DateTimeFormat('es-ES', { month: 'long' }).format(fechaInicioDate);
+        const mesFinal = new Intl.DateTimeFormat('es-ES', { month: 'long' }).format(fechaFinalDate);
+    
+        // Si las fechas están en el mismo mes
+        if (mesInicio === mesFinal) {
+            let dias = [] as any;
+    
+            for (let i = diaInicio; i <= diaFinal; i++) {
+                if (i === diaFinal && diaFinal - diaInicio > 1) {
+                    dias.push("y " + i);
+                } else if (i === diaFinal) {
+                    dias.push(i);
+                } else if (i === diaFinal - 1) {
+                    dias.push(i + " y");
+                } else {
+                    dias.push(i);
+                }
+            }
+            return `${dias.join(", ")} de ${mesInicio}`;
+        }
+    
+        // Si las fechas están en meses diferentes
+        return `${diaInicio} de ${mesInicio} hasta ${diaFinal} de ${mesFinal}`;
+    };
+
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        getDataAlumno();
+
+        const permisoData = {
+            numero_de_control: userData.numero_de_control,
             
-        </>
-    )
+            motivo,
+            fechas: formatFechaAusencia(fechaInicio, fechaFinal),
+        };
+
+        try {
+            const response = await axios.post('/api/docs/permiso', permisoData);
+
+            if (response.status === 200) {
+                console.log('Solicitud enviada con éxito');
+                setMotivo('');
+                setFechaInicio('');
+                setFechaFinal('');
+            } else {
+                console.error('Error al enviar la solicitud');
+            }
+        } catch (error) {
+            console.error('Error en la solicitud:', error);
+        }
+    };
+
+    return (
+        <div className="min-h-screen bg-gray-100 flex items-center justify-center p-5">
+            <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+                <h1 className="text-2xl font-bold mb-6">Solicitar Permiso</h1>
+                <form onSubmit={handleSubmit}>
+                    <div className="mb-4">
+                        <label htmlFor="motivo" className="block text-sm font-medium text-gray-700 mb-2">Motivo del permiso</label>
+                        <select
+                            id="motivo"
+                            name="motivo"
+                            className="block w-full p-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                            value={motivo}
+                            onChange={(e) => setMotivo(e.target.value)}
+                            required
+                        >
+                            <option value="" disabled hidden>Seleccione un motivo</option>
+                            <option value="Motivos de salud">Motivos de salud</option>
+                            <option value="Motivos personales">Motivos personales</option>
+                            <option value="Cita médica">Cita médica</option>
+                            <option value="Fallecimiento familiar">Fallecimiento familiar</option>
+                            <option value="Participación en evento deportivo">Participación en evento deportivo</option>
+                            <option value="Trámite oficial">Trámite oficial</option>
+                        </select>
+                    </div>
+                    <div className="mb-4">
+                        <label htmlFor="fechas" className="block text-sm font-medium text-gray-700 mb-2">Fecha(s) de ausencia</label>
+                        <div id='fechas'>
+                            <label htmlFor="fecha_inicio" className="block text-xs font-medium text-gray-700 mb-2">Desde: </label>
+                            <input
+                                type="date"
+                                id="fecha_inicio"
+                                name="fecha_inicio"
+                                className="block w-full p-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                                value={fechaInicio}
+                                onChange={(e) => setFechaInicio(e.target.value)}
+                                required
+                            />
+                            <label htmlFor="fecha_final" className="mt-2 block text-xs font-medium text-gray-700 mb-2">Hasta: </label>
+                            <input
+                                type="date"
+                                id="fecha_final"
+                                name="fecha_final"
+                                className="block w-full p-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                                value={fechaFinal}
+                                onChange={(e) => setFechaFinal(e.target.value)}
+                                required
+                            />
+                        </div>
+                    </div>
+                    <button
+                        type="submit"
+                        className="w-full bg-blue-500 text-white p-2.5 rounded-md hover:bg-blue-700 transition duration-200"
+                    >
+                        Enviar Solicitud
+                    </button>
+                </form>
+            </div>
+        </div>
+    );
 };
 
 export default Permiso;
-

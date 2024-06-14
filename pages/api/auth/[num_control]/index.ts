@@ -1,5 +1,5 @@
 import { NextApiResponse, NextApiRequest } from "next";
-import db from "../../../../database/config/db";
+import conn from "../../../../database/config/db";
 import jwt from 'jsonwebtoken';
 import { serialize } from "cookie";
 import { Sesion } from "../../interfaces/auth";
@@ -12,7 +12,7 @@ export default async function alumnoHandler(req: NextApiRequest, res: NextApiRes
 
     try {
         const { num_control } = req.query;
-        const [rows] = await db.query(`SELECT * FROM alumnos where numero_de_control = ?`, [num_control]);
+        const [rows] = await conn.query(`SELECT * FROM alumnos where numero_de_control = ?`, [num_control]);
         if(rows != undefined){
             const data = rows[0] as Sesion;
         const token = jwt.sign({
