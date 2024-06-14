@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 
 const Permiso = () => {
@@ -7,7 +7,7 @@ const Permiso = () => {
     const [fechaInicio, setFechaInicio] = useState('');
     const [fechaFinal, setFechaFinal] = useState('');
     const [userData, setUserData] = useState({
-        numero_de_control: '',
+        numero_de_control: 0,
         nombre: '',
         apellido: '',
         nombre_tutor: '',
@@ -18,6 +18,7 @@ const Permiso = () => {
         especialidad: ''
     });
 
+   useEffect(()=>{
     const getDataAlumno = async () => {
         try {
             const res = await axios.get('/api/data', { withCredentials: true });
@@ -26,11 +27,17 @@ const Permiso = () => {
             console.log('Petición no completada: ', error);
         }
     };
+    getDataAlumno();
+    },[]);
 
+    
+
+    
     const formatDate = (dateString) => {
         const date = new Date(dateString);
         return new Intl.DateTimeFormat('es-ES', { day: 'numeric', month: 'long' }).format(date);
     };
+    
     
     const formatFechaAusencia = (fechaInicio, fechaFinal) => {
         const fechaInicioDate = new Date(fechaInicio);
@@ -40,16 +47,15 @@ const Permiso = () => {
             return formatDate(fechaInicio);
         }
     
-        // Obtener los días y meses
+        
         const diaInicio = fechaInicioDate.getDate();
         const diaFinal = fechaFinalDate.getDate();
         const mesInicio = new Intl.DateTimeFormat('es-ES', { month: 'long' }).format(fechaInicioDate);
         const mesFinal = new Intl.DateTimeFormat('es-ES', { month: 'long' }).format(fechaFinalDate);
     
-        // Si las fechas están en el mismo mes
+        
         if (mesInicio === mesFinal) {
             let dias = [] as any;
-    
             for (let i = diaInicio; i <= diaFinal; i++) {
                 if (i === diaFinal && diaFinal - diaInicio > 1) {
                     dias.push("y " + i);
@@ -64,29 +70,34 @@ const Permiso = () => {
             return `${dias.join(", ")} de ${mesInicio}`;
         }
     
-        // Si las fechas están en meses diferentes
+        
         return `${diaInicio} de ${mesInicio} hasta ${diaFinal} de ${mesFinal}`;
     };
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        getDataAlumno();
+        console.log(userData);
 
+        console.log({inic: fechaInicio, fin:fechaFinal});
+        const fechas = formatFechaAusencia(fechaInicio, fechaFinal);
+
+        console.log({fechas: fechas});
         const permisoData = {
             numero_de_control: userData.numero_de_control,
-            
             motivo,
-            fechas: formatFechaAusencia(fechaInicio, fechaFinal),
+            fechas_permiso: fechas
         };
 
         try {
             const response = await axios.post('/api/docs/permiso', permisoData);
+            const { folio } = response.data;
 
             if (response.status === 200) {
                 console.log('Solicitud enviada con éxito');
                 setMotivo('');
                 setFechaInicio('');
                 setFechaFinal('');
+                window.location.href = `/permiso/doc/${folio}`
             } else {
                 console.error('Error al enviar la solicitud');
             }
