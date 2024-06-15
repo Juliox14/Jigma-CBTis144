@@ -1,6 +1,8 @@
 'use client'
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import Header from '../components/header';
+import Footer from '../components/Footer';
 
 const Permiso = () => {
     const [motivo, setMotivo] = useState('');
@@ -18,42 +20,42 @@ const Permiso = () => {
         especialidad: ''
     });
 
-   useEffect(()=>{
-    const getDataAlumno = async () => {
-        try {
-            const res = await axios.get('/api/data', { withCredentials: true });
-            setUserData(res.data);
-        } catch (error) {
-            console.log('Petición no completada: ', error);
-        }
-    };
-    getDataAlumno();
-    },[]);
+    useEffect(() => {
+        const getDataAlumno = async () => {
+            try {
+                const res = await axios.get('/api/data', { withCredentials: true });
+                setUserData(res.data);
+            } catch (error) {
+                console.log('Petición no completada: ', error);
+            }
+        };
+        getDataAlumno();
+    }, []);
 
-    
 
-    
+
+
     const formatDate = (dateString) => {
         const date = new Date(dateString);
         return new Intl.DateTimeFormat('es-ES', { day: 'numeric', month: 'long' }).format(date);
     };
-    
-    
+
+
     const formatFechaAusencia = (fechaInicio, fechaFinal) => {
         const fechaInicioDate = new Date(fechaInicio);
         const fechaFinalDate = new Date(fechaFinal);
-    
+
         if (fechaInicio === fechaFinal) {
             return formatDate(fechaInicio);
         }
-    
-        
+
+
         const diaInicio = fechaInicioDate.getDate();
         const diaFinal = fechaFinalDate.getDate();
         const mesInicio = new Intl.DateTimeFormat('es-ES', { month: 'long' }).format(fechaInicioDate);
         const mesFinal = new Intl.DateTimeFormat('es-ES', { month: 'long' }).format(fechaFinalDate);
-    
-        
+
+
         if (mesInicio === mesFinal) {
             let dias = [] as any;
             for (let i = diaInicio; i <= diaFinal; i++) {
@@ -69,8 +71,8 @@ const Permiso = () => {
             }
             return `${dias.join(", ")} de ${mesInicio}`;
         }
-    
-        
+
+
         return `${diaInicio} de ${mesInicio} hasta ${diaFinal} de ${mesFinal}`;
     };
 
@@ -78,10 +80,10 @@ const Permiso = () => {
         event.preventDefault();
         console.log(userData);
 
-        console.log({inic: fechaInicio, fin:fechaFinal});
+        console.log({ inic: fechaInicio, fin: fechaFinal });
         const fechas = formatFechaAusencia(fechaInicio, fechaFinal);
 
-        console.log({fechas: fechas});
+        console.log({ fechas: fechas });
         const permisoData = {
             numero_de_control: userData.numero_de_control,
             motivo,
@@ -107,63 +109,67 @@ const Permiso = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-100 flex items-center justify-center p-5">
-            <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-                <h1 className="text-2xl font-bold mb-6">Solicitar Permiso</h1>
-                <form onSubmit={handleSubmit}>
-                    <div className="mb-4">
-                        <label htmlFor="motivo" className="block text-sm font-medium text-gray-700 mb-2">Motivo del permiso</label>
-                        <select
-                            id="motivo"
-                            name="motivo"
-                            className="block w-full p-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                            value={motivo}
-                            onChange={(e) => setMotivo(e.target.value)}
-                            required
-                        >
-                            <option value="" disabled hidden>Seleccione un motivo</option>
-                            <option value="Motivos de salud">Motivos de salud</option>
-                            <option value="Motivos personales">Motivos personales</option>
-                            <option value="Cita médica">Cita médica</option>
-                            <option value="Fallecimiento familiar">Fallecimiento familiar</option>
-                            <option value="Participación en evento deportivo">Participación en evento deportivo</option>
-                            <option value="Trámite oficial">Trámite oficial</option>
-                        </select>
-                    </div>
-                    <div className="mb-4">
-                        <label htmlFor="fechas" className="block text-sm font-medium text-gray-700 mb-2">Fecha(s) de ausencia</label>
-                        <div id='fechas'>
-                            <label htmlFor="fecha_inicio" className="block text-xs font-medium text-gray-700 mb-2">Desde: </label>
-                            <input
-                                type="date"
-                                id="fecha_inicio"
-                                name="fecha_inicio"
+        <>
+            <Header />
+            <main className="min-h-screen bg-gray-100 flex items-center justify-center p-5">
+                <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+                    <h1 className="text-2xl font-bold mb-6">Solicitar Permiso</h1>
+                    <form onSubmit={handleSubmit}>
+                        <div className="mb-4">
+                            <label htmlFor="motivo" className="block text-sm font-medium text-gray-700 mb-2">Motivo del permiso</label>
+                            <select
+                                id="motivo"
+                                name="motivo"
                                 className="block w-full p-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                                value={fechaInicio}
-                                onChange={(e) => setFechaInicio(e.target.value)}
+                                value={motivo}
+                                onChange={(e) => setMotivo(e.target.value)}
                                 required
-                            />
-                            <label htmlFor="fecha_final" className="mt-2 block text-xs font-medium text-gray-700 mb-2">Hasta: </label>
-                            <input
-                                type="date"
-                                id="fecha_final"
-                                name="fecha_final"
-                                className="block w-full p-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                                value={fechaFinal}
-                                onChange={(e) => setFechaFinal(e.target.value)}
-                                required
-                            />
+                            >
+                                <option value="" disabled hidden>Seleccione un motivo</option>
+                                <option value="Motivos de salud">Motivos de salud</option>
+                                <option value="Motivos personales">Motivos personales</option>
+                                <option value="Cita médica">Cita médica</option>
+                                <option value="Fallecimiento familiar">Fallecimiento familiar</option>
+                                <option value="Participación en evento deportivo">Participación en evento deportivo</option>
+                                <option value="Trámite oficial">Trámite oficial</option>
+                            </select>
                         </div>
-                    </div>
-                    <button
-                        type="submit"
-                        className="w-full bg-blue-500 text-white p-2.5 rounded-md hover:bg-blue-700 transition duration-200"
-                    >
-                        Enviar Solicitud
-                    </button>
-                </form>
-            </div>
-        </div>
+                        <div className="mb-4">
+                            <label htmlFor="fechas" className="block text-sm font-medium text-gray-700 mb-2">Fecha(s) de ausencia</label>
+                            <div id='fechas'>
+                                <label htmlFor="fecha_inicio" className="block text-xs font-medium text-gray-700 mb-2">Desde: </label>
+                                <input
+                                    type="date"
+                                    id="fecha_inicio"
+                                    name="fecha_inicio"
+                                    className="block w-full p-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                                    value={fechaInicio}
+                                    onChange={(e) => setFechaInicio(e.target.value)}
+                                    required
+                                />
+                                <label htmlFor="fecha_final" className="mt-2 block text-xs font-medium text-gray-700 mb-2">Hasta: </label>
+                                <input
+                                    type="date"
+                                    id="fecha_final"
+                                    name="fecha_final"
+                                    className="block w-full p-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                                    value={fechaFinal}
+                                    onChange={(e) => setFechaFinal(e.target.value)}
+                                    required
+                                />
+                            </div>
+                        </div>
+                        <button
+                            type="submit"
+                            className="w-full bg-[#0D5C33] text-white p-2.5 rounded-md hover:bg-[#3a9571] transition duration-200"
+                        >
+                            Enviar Solicitud
+                        </button>
+                    </form>
+                </div>
+            </main>
+            <Footer/>
+        </>
     );
 };
 

@@ -1,16 +1,15 @@
 import Footer from "./components/Footer";
 import BoxesMain from "./components/mainPage/BoxesMain";
 import BoxHome from "./components/mainPage/BoxHome";
-import Header from "./components/Header";
+import Header from "../app/components/header"
 import DescriptionMain from "./components/mainPage/DescriptionMain";
 
 export default function Home() {
-
+  
   const dataBoxes = [
-    {title: "Título 1", description: "Descripción 1", linkCertifcate: "#"},
-    {title: "Título 2", description: "Descripción 2", linkCertifcate: "#"},
-    {title: "Título 3", description: "Descripción 3", linkCertifcate: "#"},
-    {title: "Título 4", description: "Descripción 4", linkCertifcate: "#"},
+    {title: "Tramitar permiso", description: "Tramita tu permiso rapidamente", linkCertifcate: "/permiso"},
+    {title: "Tramitar Permiso grupal", description: "Obten permiso grupal en segundos", linkCertifcate: "/constancia"},
+    {title: "Tramitar constancia", description: "Obten tu constancia de estudios en segundos", linkCertifcate: "/constancia"}
   ]
   
   return (
@@ -18,7 +17,7 @@ export default function Home() {
       <Header />
       <main className="">
         <BoxHome />
-        <DescriptionMain />
+        <DescriptionMain titulo='Elige lo que deseas realizar' description='Rápido y sencillo, elige una de las opciones y obten el documento en formato PDF:' />
 
         <section className="flex flex-col items-center my-8 gap-6 lg:flex-row lg:flex-wrap lg:justify-center">
           {dataBoxes.map((data, index) => (

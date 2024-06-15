@@ -1,11 +1,46 @@
 'use client'
-import { useRef } from "react";
+import { useRef, useEffect, useState} from "react";
 import { useReactToPrint } from "react-to-print";
 import Image from "next/image";
-import sep from "../../../../public/SEP logo.jpg"
-import pie from "../../../../public/pie de pagina.jpeg"
+import sep from "../../../../public/SEP logo.jpg";
+import pie from "../../../../public/pie de pagina.jpeg";
+import axios from "axios";
 
-export default function DocumentoPermiso() {
+export default function DocumentoConstancia(folio) {
+    const [fechaFormateada, setFechaFormateada] = useState('');
+    const [dataConstancia, setDataConstancia] = useState({
+        folio_constancia: '',
+        nombre: '',
+        apellido: '',
+        numero_de_control: '',
+        semestre: '',
+        especialidad: '',
+        grupo: '',
+		turno: '',
+        fecha_expedicion: ''
+    });
+    useEffect(()=>{
+        const getDatos = async()=> {
+        try{
+            const data = await axios.get(`/api/docs/perm/${folio.folio}`);
+            setDataConstancia(data.data[0]);
+            
+        }
+        catch(error){
+            console.log('Petición no completada: ',error);
+        }
+    };
+    getDatos();
+    },[]);
+
+    useEffect(()=>{
+        const fecha= new Date(dataConstancia.fecha_expedicion);
+        const fechaFormateada = dataConstancia.fecha_expedicion = fecha.toLocaleDateString("es-ES", {day: "numeric",
+            month: "long",
+            year: "numeric",
+        });;
+        setFechaFormateada(fechaFormateada);
+    }, [dataConstancia]);
     const componentRef = useRef(null);
     const handlePrint = useReactToPrint({
         content: () => componentRef.current,
@@ -30,7 +65,7 @@ export default function DocumentoPermiso() {
                     <section className="flex justify-end items-center h-[100px]">
                         <h3 className="text-end text-[13px] font-medium mr-7">
                             Constancia de Estudio<br />
-                            No. Oficio CB144/SEMAT/CS/2023/090
+                            No. Oficio CB144/SEMAT/CS/2023/{dataConstancia.folio_constancia}
                         </h3>
                     </section>
                     <section className="mx-7">
@@ -38,17 +73,14 @@ export default function DocumentoPermiso() {
                         <article>
                             <p className="text-justify font-medium leading-snug">
                                 El que suscribe, director del Centro de Bachillerato Tecnológico industrial y de servicios
-                                No.144, con clave 07DCT0001Z, hace constar que el (la) alumno (a) <strong>GONZALEZ OCHOA
-                                FABRICIO YAEL</strong>, con número de control <strong>2307051440193</strong>, se encuentra inscrito en esta
-                                Institución Educativa, cursando el <strong>TERCER</strong> semestre de la carrera de <strong>TÉCNICO EN
-                                OFIMÁTICA</strong>, grupo <strong>“A”</strong>, turno <strong>Matutino</strong>.
+                                No.144, con clave 07DCT0001Z, hace constar que el (la) alumno (a) <strong>{(dataConstancia.nombre).toUpperCase()} {(dataConstancia.apellido).toUpperCase()}</strong>, con número de control <strong>2307051440193</strong>, se encuentra inscrito en esta
+                                Institución Educativa, cursando el <strong>{dataConstancia.semestre.toUpperCase()}</strong> semestre de la carrera de <strong>{dataConstancia.especialidad.toUpperCase()}</strong>, grupo <strong>“A”</strong>, turno <strong>Matutino</strong>.
                                 <br /><br /><br />
                                 Durante el periodo comprendido del 28 de agosto al 12 de diciembre de 2023.
                                 <br />Receso intersemestral del 13 de diciembre de 2023 al 05 de febrero de 2024
                                 <br /><br /><br />
                                     Se extiende la presente a petición del (la) interesado(a) para los fines legales que le
-                                    convengan, en la ciudad de Tuxtla Gutiérrez, Chiapas, a los <strong>CUATRO</strong> día(s) del mes de 
-                                    <strong> SEPTIEMBRE DEL 2023</strong>.
+                                    convengan, en la ciudad de Tuxtla Gutiérrez, Chiapas, a <strong>{fechaFormateada}</strong>.
                                 <br /><br /><br /><br />
                                 <strong>ATENTAMENTE</strong>
                                 <br /><br />

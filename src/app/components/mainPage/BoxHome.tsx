@@ -9,7 +9,7 @@ export default function BoxHome() {
                 <Image src={documento} alt="Imagen de documentos" fill={true} />
             </article>
             <article className="hidden lg:w-[50%] lg:block">
-                <DescriptionMain />
+                <DescriptionMain titulo='Modulo express CBTis144' description='¡Bienvenido al Módulo Express del CBTis 144! Nuestro portal web está diseñado para facilitar a estudiantes, padres de familia y personal docente el acceso rápido y eficiente a una variedad de trámites escolares.'/>
             </article>
         </section>
     );
