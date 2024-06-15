@@ -51,7 +51,7 @@ export default function DocumentoPermiso(folio) {
     });
     return (
         <>
-            <div className="bg-slate-300 py-7 flex items-center justify-center" >
+            <div className="bg-slate-300 py-7 flex items-center justify-center " >
                 <div className="bg-white p-10 pt-8 pb-0 w-[220mm] h-[284.5mm] overflow-auto text-black" ref={componentRef}>
                     <header className="flex flex-row items-center pr-10">
                         <div className="inline">
@@ -94,10 +94,10 @@ export default function DocumentoPermiso(folio) {
                             <Image src={pie.src} alt="logo de la SEP" width={750} height={0}></Image>
                     </div>
                 </div>
+                <button className="bg-[#0D5C33] shadow-xl rounded-xl w-[200px] h-[75px] bottom-1 left-10 fixed justify-items-center text-white p-2.5 hover:bg-[#3a9571]" onClick={handlePrint}><strong>Descargar Permiso</strong></button>
             </div>
-            <div className="bg-white w-full h-[100px] flex items-center justify-center">
-                <button className="bg-white shadow-xl rounded-xl w-[200px] h-[75px] justify-items-center hover:bg-slate-200" onClick={handlePrint}><strong>Descargar Permiso</strong></button>
-            </div>
+                
+
         </>
     )
 }

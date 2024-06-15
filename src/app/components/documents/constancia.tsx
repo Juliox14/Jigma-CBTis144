@@ -22,9 +22,8 @@ export default function DocumentoConstancia(folio) {
     useEffect(()=>{
         const getDatos = async()=> {
         try{
-            const data = await axios.get(`/api/docs/perm/${folio.folio}`);
+            const data = await axios.get(`/api/docs/cons/${folio.folio}`);
             setDataConstancia(data.data[0]);
-            
         }
         catch(error){
             console.log('Petición no completada: ',error);
@@ -73,7 +72,7 @@ export default function DocumentoConstancia(folio) {
                         <article>
                             <p className="text-justify font-medium leading-snug">
                                 El que suscribe, director del Centro de Bachillerato Tecnológico industrial y de servicios
-                                No.144, con clave 07DCT0001Z, hace constar que el (la) alumno (a) <strong>{(dataConstancia.nombre).toUpperCase()} {(dataConstancia.apellido).toUpperCase()}</strong>, con número de control <strong>2307051440193</strong>, se encuentra inscrito en esta
+                                No.144, con clave 07DCT0001Z, hace constar que el (la) alumno (a) <strong>{(dataConstancia.nombre).toUpperCase()} {(dataConstancia.apellido).toUpperCase()}</strong>, con número de control <strong>{dataConstancia.numero_de_control}</strong>, se encuentra inscrito en esta
                                 Institución Educativa, cursando el <strong>{dataConstancia.semestre.toUpperCase()}</strong> semestre de la carrera de <strong>{dataConstancia.especialidad.toUpperCase()}</strong>, grupo <strong>“A”</strong>, turno <strong>Matutino</strong>.
                                 <br /><br /><br />
                                 Durante el periodo comprendido del 28 de agosto al 12 de diciembre de 2023.
@@ -95,10 +94,9 @@ export default function DocumentoConstancia(folio) {
                             <Image src={pie.src} alt="logo de la SEP" width={750} height={0}></Image>
                     </div>
                 </div>
+                <button className="bg-[#0D5C33] shadow-xl rounded-xl w-[200px] h-[75px] bottom-1 left-10 fixed justify-items-center text-white p-2.5 hover:bg-[#3a9571]" onClick={handlePrint}><strong>Descargar Constancia</strong></button>
             </div>
-            <div className="bg-white w-full h-[100px] flex items-center justify-center">
-                <button className="bg-white shadow-xl rounded-xl w-[200px] h-[75px] justify-items-center hover:bg-slate-200" onClick={handlePrint}>Descargar constancia</button>
-            </div>
+            
         </>
     )
 }

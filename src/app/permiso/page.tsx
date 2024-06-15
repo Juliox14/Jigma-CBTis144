@@ -58,18 +58,16 @@ const Permiso = () => {
 
         if (mesInicio === mesFinal) {
             let dias = [] as any;
-            for (let i = diaInicio; i <= diaFinal; i++) {
-                if (i === diaFinal && diaFinal - diaInicio > 1) {
-                    dias.push("y " + i);
-                } else if (i === diaFinal) {
+            for (let i = diaInicio + 1; i <= diaFinal + 1; i++) {
+                if (i < diaFinal + 1) {
                     dias.push(i);
-                } else if (i === diaFinal - 1) {
-                    dias.push(i + " y");
+                } else if (i === diaFinal + 1  && (diaFinal + 1) - (diaInicio+1) > 1) {
+                    dias.push(" y " + i);
                 } else {
                     dias.push(i);
                 }
             }
-            return `${dias.join(", ")} de ${mesInicio}`;
+            return `${dias.join(', ')} de ${mesInicio}`;
         }
 
 
