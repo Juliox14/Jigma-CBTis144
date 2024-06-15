@@ -1,4 +1,4 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+Módulo express para crear constancias y permisos en base a una plantilla en el CBTIS144
 
 ## Getting Started
 
