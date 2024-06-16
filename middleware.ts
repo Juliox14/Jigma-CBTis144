@@ -1,20 +1,26 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-
-const isLoggedIn: boolean = true;
+import jwt from "jsonwebtoken";
 
 export function middleware(request: NextRequest){
 
-    let headers = new Headers(request.headers);
+    let jwtCookie = request.cookies.get("jwt");
 
-    if(isLoggedIn){
+    try{
+        let decoded = jwt.verify(jwtCookie, process.env);
+    }catch(e){
+        return NextResponse.redirect(new URL("/login", request.url));
+    }
+
+    if(true){
         return NextResponse.next();
     }
     
     return NextResponse.redirect(new URL("/", request.url));
-    
 }
 
 export const config = {
+
     matcher: ["/login"]
+
 }

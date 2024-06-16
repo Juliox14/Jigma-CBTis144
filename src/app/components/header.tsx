@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Divider, Button } from "@nextui-org/react";
 import { IconButton, Drawer, Typography, Box, List, ListItem, ListItemButton, ListItemText } from "@mui/material";
 import MenuIcon from '@mui/icons-material/Menu';
-import Link from "next/link";
+import { FlyoutLink } from "./FlyoutLink";
 import axios from "axios";
 
 export default function Header() {
@@ -60,13 +60,19 @@ export default function Header() {
             <nav className="relative h-16 bg-[#13322B] flex">
                 <ul className="hidden lg:w-full lg:h-full lg:flex lg:items-center lg:justify-center gap-10 lg:gap-20">
                     <li>
-                        <Link href="/" className="text-white">Inicio</Link>
+                    <FlyoutLink href="/" FlyoutColor="bg-white"> 
+                        <span className="text-white">Inicio</span>
+                    </FlyoutLink>
                     </li>
                     <li>
-                        <Link href="#" className="text-white">Acerca de</Link>
+                    <FlyoutLink href="/" FlyoutColor="bg-white"> 
+                        <span className="text-white">Acerca de nosotros</span>
+                    </FlyoutLink>
                     </li>
                     <li>
-                        <Link href="#" className="text-white">Contacto</Link>
+                    <FlyoutLink href="/" FlyoutColor="bg-white"> 
+                        <span className="text-white">Contacto</span>
+                    </FlyoutLink>
                     </li>
                 </ul>
 
@@ -85,7 +91,7 @@ export default function Header() {
                     <Divider orientation="vertical" className="bg-white mx-2" />
                 </div>
                 
-                <div className="hidden lg:absolute lg:w-[8em] lg:h-full lg:flex lg:items-center lg:justify-center lg:right-0">
+                <div className="hidden lg:absolute lg:w-[8em] lg:h-full lg:flex lg:items-center lg:justify-center lg:right-2">
                     <Button className="bg-[#1d4b3f] text-white" onClick={cerrarSesion}>
                         Cerrar sesión
                     </Button>

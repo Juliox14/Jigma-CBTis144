@@ -8,9 +8,10 @@ interface BoxesMainProps {
     title: string;
     description: string;
     linkCertifcate: string;
+    boxStyle: {backgroundColor: string, boxShadow: string};
 }
 
-export default function BoxesMain({ title, description, linkCertifcate }: BoxesMainProps) {
+export default function BoxesMain({ title, description, linkCertifcate, boxStyle }: BoxesMainProps) {
     const [permisoAllowed, setPermisoAllowed] = useState(true);
     const [userData, setUserData] = useState({
         numero_de_control: 0,
@@ -83,10 +84,10 @@ export default function BoxesMain({ title, description, linkCertifcate }: BoxesM
                     <span className="block sm:inline">Por favor acercate a control escolar para más información</span>
                 </div>
             )}
-            <motion.div className="p-4 bg-gray-200 rounded-lg shadow-lg w-[90%] cursor-pointer lg:w-[30%]" whileHover={{ scale: 1.04 }}>
+            <motion.div className={`p-4 ${boxStyle.backgroundColor} ${boxStyle.boxShadow} rounded-lg shadow-lg w-[90%] cursor-pointer lg:w-[30%]`} whileHover={{ scale: 1.04 }}>
                 <Link href={linkCertifcate} onClick={handleLinkClick}>
-                    <h2 className="text-2xl font-semibold text-gray-800">{title}</h2>
-                    <p className="text-gray-600">{description}</p>
+                    <h2 className="text-2xl font-semibold text-white">{title}</h2>
+                    <p className="text-white">{description}</p>
                 </Link>
             </motion.div>
         </>
