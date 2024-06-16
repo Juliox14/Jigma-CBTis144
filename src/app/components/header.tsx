@@ -4,6 +4,7 @@ import { Divider, Button } from "@nextui-org/react";
 import { IconButton, Drawer, Typography, Box, List, ListItem, ListItemButton, ListItemText } from "@mui/material";
 import MenuIcon from '@mui/icons-material/Menu';
 import Link from "next/link";
+import axios from "axios";
 
 export default function Header() {
 
@@ -34,6 +35,17 @@ export default function Header() {
         </Box>
       );
 
+      const cerrarSesion = async () => {
+        try{
+            const response = await axios.post('/api/logout');
+            console.log(response);
+            window.location.href = '/login';
+        }
+        catch(error){
+            console.error(error);
+        }
+    }; 
+
     return(
         <header>
             <section className="bg-[#0C231E] h-12">
@@ -48,7 +60,7 @@ export default function Header() {
             <nav className="relative h-16 bg-[#13322B] flex">
                 <ul className="hidden lg:w-full lg:h-full lg:flex lg:items-center lg:justify-center gap-10 lg:gap-20">
                     <li>
-                        <Link href="#" className="text-white">Inicio</Link>
+                        <Link href="/" className="text-white">Inicio</Link>
                     </li>
                     <li>
                         <Link href="#" className="text-white">Acerca de</Link>
@@ -74,7 +86,7 @@ export default function Header() {
                 </div>
                 
                 <div className="hidden lg:absolute lg:w-[8em] lg:h-full lg:flex lg:items-center lg:justify-center lg:right-0">
-                    <Button className="bg-[#1d4b3f] text-white">
+                    <Button className="bg-[#1d4b3f] text-white" onClick={cerrarSesion}>
                         Cerrar sesión
                     </Button>
                 </div>
