@@ -7,20 +7,13 @@ export function middleware(request: NextRequest){
     let jwtCookie = request.cookies.get("jwt");
 
     try{
-        let decoded = jwt.verify(jwtCookie, process.env);
+        let decoded = jwt.verify(jwtCookie, process.env.JWT_SECRET_KEY);
+        return NextResponse.next();
     }catch(e){
         return NextResponse.redirect(new URL("/login", request.url));
     }
-
-    if(true){
-        return NextResponse.next();
-    }
-    
-    return NextResponse.redirect(new URL("/", request.url));
 }
 
 export const config = {
-
-    matcher: ["/login"]
-
+    matcher: ["/"]
 }
