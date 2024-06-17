@@ -1,9 +1,9 @@
 import { NextApiResponse, NextApiRequest } from "next";
 import conn from "../../../../database/config/db";
-import jwt from 'jsonwebtoken';
+import { SignJWT } from "jose";
 import { serialize } from "cookie";
-import { Sesion } from "../../interfaces/auth";
-const superTokenSecretKey = process.env.JWT_SECRET_KEY;
+
+const superTokenSecretKey = new TextEncoder().encode(process.env.JWT_SECRET_KEY);
 
 export default async function alumnoHandler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method !== 'GET') {
@@ -14,29 +14,24 @@ export default async function alumnoHandler(req: NextApiRequest, res: NextApiRes
         const { num_control } = req.query;
         const [rows] = await conn.query(`SELECT * FROM alumnos where numero_de_control = ?`, [num_control]);
         if(rows != undefined){
-            const data = rows[0] as Sesion;
-        const token = jwt.sign({
-            exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24,
-            numero_de_control: data.numero_de_control,
-            nombre: data.nombre,
-            apellido: data.apellido,
-            nombre_tutor: data.nombre_tutor,
-            apellido_tutor: data.apellido_tutor,
-            turno: data.turno,
-            semestre: data.semestre,
-            grupo: data.grupo,
-            especialidad: data.especialidad
-        }, superTokenSecretKey as string);
+            const { exp, iat, ...userPublic } = rows[0];
+            
+            const tokenJose = await new SignJWT({...userPublic})
+            .setProtectedHeader({alg: 'HS256'})
+            .setIssuedAt()
+            .setExpirationTime('1h')
+            .sign(superTokenSecretKey);
 
-        const serialized = serialize('auth', token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict',
-            maxAge: 1000 + 60 * 60 * 24,
-            path: '/'
-        });
-        res.setHeader('Set-Cookie', serialized);
-        res.status(201).json({status: 'Token creado con éxito'});
+            const serialized = serialize('auth', tokenJose, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'strict',
+                maxAge: 1000 + 60 * 60,
+                path: '/'
+            });
+
+            res.setHeader('Set-Cookie', serialized);
+            res.status(201).json({status: 'Token creado con éxito'});
         }
         else{
             console.error('Error al crear el token:');

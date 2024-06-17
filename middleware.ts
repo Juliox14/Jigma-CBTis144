@@ -1,13 +1,18 @@
 import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
-import jwt from "jsonwebtoken";
+import { NextRequest } from "next/server";
+import { jwtVerify } from "jose";
 
-export function middleware(request: NextRequest){
+const superTokenSecretKey = new TextEncoder().encode(process.env.JWT_SECRET_KEY);
+export async function middleware(request: NextRequest){
 
-    let jwtCookie = request.cookies.get("jwt");
+    const { pathname } = request.nextUrl, 
+    jwtCookie = request.cookies.get("auth")?.value as any;
+
+    if(pathname === "/login" && jwtCookie) return NextResponse.redirect(new URL("/", request.url));
+    else if(!jwtCookie && pathname === "/login") return NextResponse.next();
 
     try{
-        let decoded = jwt.verify(jwtCookie, process.env.JWT_SECRET_KEY);
+        await jwtVerify(jwtCookie, superTokenSecretKey);
         return NextResponse.next();
     }catch(e){
         return NextResponse.redirect(new URL("/login", request.url));
@@ -15,5 +20,5 @@ export function middleware(request: NextRequest){
 }
 
 export const config = {
-    matcher: ["/"]
+    matcher: ["/", "/login", "/constancia", "/permiso", "/prueba"],
 }

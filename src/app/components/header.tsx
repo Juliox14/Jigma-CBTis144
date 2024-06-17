@@ -8,6 +8,17 @@ import axios from "axios";
 
 export default function Header() {
 
+    const cerrarSesion = async () => {
+        try{
+            const response = await axios.post('/api/logout');
+            console.log(response);
+            window.location.href = '/login';
+        }
+        catch(error){
+            console.error(error);
+        }
+    }; 
+
     const drawerWidth = 240;
     const navItems = ['Inicio', 'Acerca de nosotros', 'Contacto'];
 
@@ -32,19 +43,18 @@ export default function Header() {
               </ListItem>
             ))}
           </List>
+          <Divider />
+        <List>
+            {['Cerrar sesión'].map((text, index) => (
+            <ListItem key={text} disablePadding>
+                <ListItemButton sx={{ textAlign: 'center' }} onClick={cerrarSesion}>
+                <ListItemText primary={text} />
+                </ListItemButton>
+            </ListItem>
+            ))}
+        </List>
         </Box>
       );
-
-      const cerrarSesion = async () => {
-        try{
-            const response = await axios.post('/api/logout');
-            console.log(response);
-            window.location.href = '/login';
-        }
-        catch(error){
-            console.error(error);
-        }
-    }; 
 
     return(
         <header>
