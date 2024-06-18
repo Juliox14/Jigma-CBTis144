@@ -1,5 +1,5 @@
 import { NextApiResponse, NextApiRequest } from "next";
-import conn from "../../../../../database/config/db";
+import conn from "../../../../database/config/db";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method !== 'GET') {
@@ -7,8 +7,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     try {
-        const {folio} = req.query;
-        const [rows] = await conn.query(`CALL get_permiso(${folio});`);
+        const { numero_de_control, folio } = req.query;
+        const [rows] = await conn.query(`SELECT * FROM relleno_permiso where numero_de_control= ${numero_de_control} AND folio_permiso= ${folio};`);
         console.log(rows);
         res.status(200).json(rows[0]);
     } catch (error: any) {

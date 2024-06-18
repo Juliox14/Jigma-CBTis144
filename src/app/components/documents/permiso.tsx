@@ -6,7 +6,8 @@ import sep from "../../../../public/SEP logo.jpg"
 import pie from "../../../../public/pie de pagina.jpeg"
 import axios from "axios";
 
-export default function DocumentoPermiso(folio) {
+export default function DocumentoPermiso({folio}) {
+
     const [fechaFormateada, setFechaFormateada] = useState('');
     const [dataPermiso, setDataPermiso] = useState({
         folio_permiso: '',
@@ -22,35 +23,71 @@ export default function DocumentoPermiso(folio) {
         nombre_tutor: '',
         apellido_tutor: ''
     });
+
+    const [userData, setUserData] = useState({
+        numero_de_control: 0,
+        nombre: '',
+        apellido: '',
+        nombre_tutor: '',
+        apellido_tutor: '',
+        turno: '',
+        semestre: '',
+        grupo: '',
+        especialidad: ''
+    });
+
+    useEffect(() => {
+        const getDataAlumno = async () => {
+            try {
+                const res = await axios.get('/api/data', { withCredentials: true });
+                setUserData(res.data);
+            } catch (error) {
+                console.log('Petición no completada: ', error);
+            }
+        };
+        getDataAlumno();
+    }, []);
+
     useEffect(()=>{
         const getDatos = async()=> {
         try{
-            const data = await axios.get(`/api/docs/perm/${folio.folio}`);
-            setDataPermiso(data.data[0]);
-            
+            if(userData.numero_de_control !== 0){
+                console.log(userData.numero_de_control)
+                const data = await axios.get(`/api/docs/perm`, {params: 
+                    {
+                        numero_de_control: userData.numero_de_control,
+                        folio: folio
+                    }
+                });
+                setDataPermiso(data.data);
+            }
         }
         catch(error){
             console.log('Petición no completada: ',error);
         }
     };
     getDatos();
-    },[]);
+    },[userData]);
 
     useEffect(()=>{
-        const fecha= new Date(dataPermiso.fecha_recepcion);
-        const fechaFormateada = dataPermiso.fecha_recepcion = fecha.toLocaleDateString("es-ES", {day: "numeric",
-            month: "long",
-            year: "numeric",
-        });;
-        setFechaFormateada(fechaFormateada);
+        if(dataPermiso !== undefined){
+            const fecha= new Date(dataPermiso.fecha_recepcion);
+            const fechaFormateada = dataPermiso.fecha_recepcion = fecha.toLocaleDateString("es-ES", {day: "numeric",
+                month: "long",
+                year: "numeric",
+            });;
+            setFechaFormateada(fechaFormateada);
+        }
     }, [dataPermiso]);
     
     const componentRef = useRef(null);
     const handlePrint = useReactToPrint({
         content: () => componentRef.current,
     });
+
     return (
         <>
+            {dataPermiso !== undefined &&
             <div className="bg-slate-300 py-7 flex items-center justify-center " >
                 <div className="bg-white p-10 pt-8 pb-0 w-[220mm] h-[284.5mm] overflow-auto text-black" ref={componentRef}>
                     <header className="flex flex-row items-center pr-10">
@@ -95,9 +132,8 @@ export default function DocumentoPermiso(folio) {
                     </div>
                 </div>
                 <button className="bg-[#0D5C33] shadow-xl rounded-xl w-[200px] h-[75px] bottom-1 left-10 fixed justify-items-center text-white p-2.5 hover:bg-[#3a9571]" onClick={handlePrint}><strong>Descargar Permiso</strong></button>
-            </div>
-                
-
+            </div>    
+            }
         </>
     )
 }

@@ -97,7 +97,7 @@ const Permiso = () => {
                 setMotivo('');
                 setFechaInicio('');
                 setFechaFinal('');
-                window.location.href = `/permiso/doc/${folio}`
+                window.location.href = `/permiso/doc/${folio}`;
             } else {
                 console.error('Error al enviar la solicitud');
             }
