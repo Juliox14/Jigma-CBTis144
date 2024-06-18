@@ -10,21 +10,7 @@ import crypto from "crypto";
 export default function DocumentoPermiso({folio}) {
 
     const [fechaFormateada, setFechaFormateada] = useState('');
-    const [dataPermiso, setDataPermiso] = useState({
-        folio_permiso: '',
-        turno: '',
-        fecha_recepcion: '',
-        apellido: '',
-        nombre: '',
-        semestre: '',
-        grupo: '',
-        especialidad: '',
-        fechas_permiso: '',
-        motivo: '',
-        nombre_tutor: '',
-        apellido_tutor: ''
-    });
-
+    
     const [userData, setUserData] = useState({
         numero_de_control: 0,
         nombre: '',
@@ -36,6 +22,15 @@ export default function DocumentoPermiso({folio}) {
         grupo: '',
         especialidad: ''
     });
+
+    const [dataPermiso, setDataPermiso] = useState({
+        ...userData,
+        folio_permiso: '',
+        fecha_recepcion: '',
+        fechas_permiso: '',
+        motivo: '',
+    });
+
     const [selloDigital, setSelloDigital] = useState('');
 
     useEffect(() => {
@@ -61,7 +56,12 @@ export default function DocumentoPermiso({folio}) {
                         folio: folio
                     }
                 });
-                setDataPermiso(data.data);
+                if(data.data.folio_permiso !== undefined){
+                    setDataPermiso(data.data);
+                }else{
+                    window.location.href = '/404'
+                }
+                
             }
         }
         catch(error){
@@ -81,21 +81,6 @@ export default function DocumentoPermiso({folio}) {
             setFechaFormateada(fechaFormateada);
         }
     }, [dataPermiso]);
-
-    useEffect(() => {
-        const getDatos = async () => {
-            try {
-                const data = await axios.get(`/api/docs/perm/${folio.folio}`);
-                setDataPermiso(data.data[0]);
-
-            }
-            catch (error) {
-                console.log('Petición no completada: ', error);
-            }
-        };
-        getDatos();
-    }, []);
-
 
     useEffect(() => {
         const documentoString = JSON.stringify(dataPermiso);
@@ -177,7 +162,6 @@ export default function DocumentoPermiso({folio}) {
                 <button className="bg-[#0D5C33] shadow-xl rounded-xl w-[200px] h-[75px] bottom-1 left-10 fixed justify-items-center text-white p-2.5 hover:bg-[#3a9571]" onClick={handlePrint}><strong>Descargar Permiso</strong></button>
             </div>
 }
-
 
         </>
     )
