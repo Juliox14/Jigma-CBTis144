@@ -1,10 +1,11 @@
 'use client'
-import { useRef, useEffect, useState} from "react";
+import { useRef, useEffect, useState } from "react";
 import { useReactToPrint } from "react-to-print";
 import Image from "next/image";
 import sep from "../../../../public/SEP logo.jpg";
 import pie from "../../../../public/pie de pagina.jpeg";
 import axios from "axios";
+import crypto from 'crypto';
 
 export default function DocumentoConstancia(folio) {
     const [fechaFormateada, setFechaFormateada] = useState('');
@@ -16,25 +17,34 @@ export default function DocumentoConstancia(folio) {
         semestre: '',
         especialidad: '',
         grupo: '',
-		turno: '',
+        turno: '',
         fecha_expedicion: ''
     });
-    useEffect(()=>{
-        const getDatos = async()=> {
-        try{
-            const data = await axios.get(`/api/docs/cons/${folio.folio}`);
-            setDataConstancia(data.data[0]);
-        }
-        catch(error){
-            console.log('Petición no completada: ',error);
-        }
-    };
-    getDatos();
-    },[]);
+    const [selloDigital, setSelloDigital] = useState('');
 
-    useEffect(()=>{
-        const fecha= new Date(dataConstancia.fecha_expedicion);
-        const fechaFormateada = dataConstancia.fecha_expedicion = fecha.toLocaleDateString("es-ES", {day: "numeric",
+    useEffect(() => {
+        const getDatos = async () => {
+            try {
+                const data = await axios.get(`/api/docs/cons/${folio.folio}`);
+                setDataConstancia(data.data[0]);
+            }
+            catch (error) {
+                console.log('Petición no completada: ', error);
+            }
+        };
+        getDatos();
+    }, []);
+
+    useEffect(() => {
+        const documentoString = JSON.stringify(dataConstancia);
+        const firma = crypto.createHash('sha256').update(documentoString).digest('hex');
+        setSelloDigital(firma);
+    }, [dataConstancia]);
+
+    useEffect(() => {
+        const fecha = new Date(dataConstancia.fecha_expedicion);
+        const fechaFormateada = dataConstancia.fecha_expedicion = fecha.toLocaleDateString("es-ES", {
+            day: "numeric",
             month: "long",
             year: "numeric",
         });;
@@ -54,14 +64,19 @@ export default function DocumentoConstancia(folio) {
                         </div>
                         <div className="w-[2px] h-[42px] bg-[#C59553]">
                         </div>
-                        <h3 className="mt-3 text-[10px] font-semibold inline-block text-end ml-auto leading-tight"><strong className="">Subsecretaría de Educación Media Superior<br/>
-                            Dirección General de Educación Tecnológica Industrial y Servicios<br/></strong>
-                            Centro de Bachillerato Tecnológico Industrial y de Servicios No. 144<br/>
-                            “José Emilio Grajales Moguel”<br/>
+                        <h3 className="mt-3 text-[10px] font-semibold inline-block text-end ml-auto leading-tight"><strong className="">Subsecretaría de Educación Media Superior<br />
+                            Dirección General de Educación Tecnológica Industrial y Servicios<br /></strong>
+                            Centro de Bachillerato Tecnológico Industrial y de Servicios No. 144<br />
+                            “José Emilio Grajales Moguel”<br />
                             C.C.T. 07DCT0001Z
                         </h3>
                     </header>
                     <section className="flex justify-end items-center h-[100px]">
+                        <div className="w-[250px] mr-[220px]">
+                            <p className="text-xs break-words">
+                                <strong>Sello digital:</strong> {selloDigital}
+                            </p>
+                        </div>
                         <h3 className="text-end text-[13px] font-medium mr-7">
                             Constancia de Estudio<br />
                             No. Oficio CB144/SEMAT/CS/2023/{dataConstancia.folio_constancia}
@@ -78,25 +93,25 @@ export default function DocumentoConstancia(folio) {
                                 Durante el periodo comprendido del 28 de agosto al 12 de diciembre de 2023.
                                 <br />Receso intersemestral del 13 de diciembre de 2023 al 05 de febrero de 2024
                                 <br /><br /><br />
-                                    Se extiende la presente a petición del (la) interesado(a) para los fines legales que le
-                                    convengan, en la ciudad de Tuxtla Gutiérrez, Chiapas, a <strong>{fechaFormateada}</strong>.
+                                Se extiende la presente a petición del (la) interesado(a) para los fines legales que le
+                                convengan, en la ciudad de Tuxtla Gutiérrez, Chiapas, a <strong>{fechaFormateada}</strong>.
                                 <br /><br /><br /><br />
                                 <strong>ATENTAMENTE</strong>
                                 <br /><br />
                             </p>
                             <p className="mt-[170px] font-[24px] leading-snug">
                                 <strong>C.P. IGNACIO ROMEO MENDEZ RUIZ<br />
-                                DIRECTOR DEL PLANTEL</strong>
+                                    DIRECTOR DEL PLANTEL</strong>
                             </p>
                         </article>
                     </section>
-                    <div className="w-full mt-[20px]">
-                            <Image src={pie.src} alt="logo de la SEP" width={750} height={0}></Image>
+                    <div className="w-full mt-[40px]">
+                        <Image src={pie.src} alt="logo de la SEP" width={750} height={0}></Image>
                     </div>
                 </div>
                 <button className="bg-[#0D5C33] shadow-xl rounded-xl w-[200px] h-[75px] bottom-1 left-10 fixed justify-items-center text-white p-2.5 hover:bg-[#3a9571]" onClick={handlePrint}><strong>Descargar Constancia</strong></button>
             </div>
-            
+
         </>
     )
 }

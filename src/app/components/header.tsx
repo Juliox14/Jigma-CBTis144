@@ -75,12 +75,12 @@ export default function Header() {
                     </FlyoutLink>
                     </li>
                     <li>
-                    <FlyoutLink href="/" FlyoutColor="bg-white"> 
+                    <FlyoutLink href="https://www.windcodeinc.me/" FlyoutColor="bg-white"> 
                         <span className="text-white">Acerca de nosotros</span>
                     </FlyoutLink>
                     </li>
                     <li>
-                    <FlyoutLink href="/" FlyoutColor="bg-white"> 
+                    <FlyoutLink href="https://www.windcodeinc.me/contacto" FlyoutColor="bg-white"> 
                         <span className="text-white">Contacto</span>
                     </FlyoutLink>
                     </li>
