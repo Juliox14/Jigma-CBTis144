@@ -19,7 +19,7 @@ const Permiso = () => {
         grupo: '',
         especialidad: ''
     });
-
+    const [diasSeleccionados, setDiasSeleccionados] = useState(0);
     useEffect(() => {
         const getDataAlumno = async () => {
             try {
@@ -73,15 +73,54 @@ const Permiso = () => {
 
         return `${diaInicio} de ${mesInicio} hasta ${diaFinal} de ${mesFinal}`;
     };
+    const handleFechaInicioChange = (value) => {
+        const selectedDate = new Date(value);
+        const currentDate = new Date();
+        
+        if (selectedDate < currentDate) {
+            alert('No puedes seleccionar fechas anteriores al día actual.');
+            return;
+        }
+
+        setFechaInicio(value);
+        if (fechaFinal) {
+            const start = new Date(value);
+            const end = new Date(fechaFinal);
+            const differenceInTime = end.getTime() - start.getTime();
+            const differenceInDays = differenceInTime / (1000 * 3600 * 24);
+            setDiasSeleccionados(differenceInDays + 1);
+        }
+    };
+
+    const handleFechaFinalChange = (value) => {
+        const selectedDate = new Date(value);
+        const currentDate = new Date();
+        
+        if (selectedDate < currentDate) {
+            alert('No puedes seleccionar fechas anteriores al día actual.');
+            return;
+        }
+
+        setFechaFinal(value);
+        if (fechaInicio) {
+            const start = new Date(fechaInicio);
+            const end = new Date(value);
+            const differenceInTime = end.getTime() - start.getTime();
+            const differenceInDays = differenceInTime / (1000 * 3600 * 24);
+            setDiasSeleccionados(differenceInDays + 1);
+        }
+    };
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        console.log(userData);
 
-        console.log({ inic: fechaInicio, fin: fechaFinal });
+        if (diasSeleccionados > 3) {
+            alert('Solo puedes seleccionar hasta 3 días de ausencia.');
+            return;
+        }
+
         const fechas = formatFechaAusencia(fechaInicio, fechaFinal);
 
-        console.log({ fechas: fechas });
         const permisoData = {
             numero_de_control: userData.numero_de_control,
             motivo,
@@ -142,7 +181,7 @@ const Permiso = () => {
                                     name="fecha_inicio"
                                     className="block w-full p-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
                                     value={fechaInicio}
-                                    onChange={(e) => setFechaInicio(e.target.value)}
+                                    onChange={(e) => handleFechaInicioChange(e.target.value)}
                                     required
                                 />
                                 <label htmlFor="fecha_final" className="mt-2 block text-xs font-medium text-gray-700 mb-2">Hasta: </label>
@@ -152,9 +191,10 @@ const Permiso = () => {
                                     name="fecha_final"
                                     className="block w-full p-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
                                     value={fechaFinal}
-                                    onChange={(e) => setFechaFinal(e.target.value)}
+                                    onChange={(e) => handleFechaFinalChange(e.target.value)}
                                     required
                                 />
+                                {diasSeleccionados > 3 && <p className="text-xs text-red-500 mt-1">Seleccionaste más de 3 días. Por favor, ajusta las fechas.</p>}
                             </div>
                         </div>
                         <button
